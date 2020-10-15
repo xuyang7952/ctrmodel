@@ -27,18 +27,20 @@ def gbdt_lr_predict(data, category_feature, continuous_feature):
         onehot_feats = pd.get_dummies(data[col], prefix = col)
         data.drop([col], axis = 1, inplace = True)
         data = pd.concat([data, onehot_feats], axis = 1)
+    print("data.shape",data.shape)
 
     train = data[data['Label'] != -1]
     target = train.pop('Label')
     test = data[data['Label'] == -1]
     test.drop(['Label'], axis = 1, inplace = True)
+    print(train.head(5))
 
     # 划分数据集
     x_train, x_val, y_train, y_val = train_test_split(train, target, test_size = 0.2, random_state = 2020)
 
     n_estimators = 32
     num_leaves = 64
-    # 开始训练gbdt，使用100课树，每课树64个叶节点
+    # 开始训练gbdt，使用32课树，每课树64个叶节点
     model = lgb.LGBMRegressor(objective='binary',
                             subsample= 0.8,
                             min_child_weight= 0.5,
@@ -100,3 +102,5 @@ if __name__ == '__main__':
     category_feature = ['C'] * 26
     category_feature = [col + str(i + 1) for i, col in enumerate(category_feature)] 
     gbdt_lr_predict(data, category_feature, continuous_feature)
+
+
